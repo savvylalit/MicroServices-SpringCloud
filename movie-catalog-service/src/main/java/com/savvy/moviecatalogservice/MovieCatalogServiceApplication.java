@@ -2,24 +2,31 @@ package com.savvy.moviecatalogservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 @EnableEurekaClient
+@EnableCircuitBreaker
 public class MovieCatalogServiceApplication {
-	
+
 	@Bean
 	@LoadBalanced
 	public RestTemplate getRestTemplate() {
-		return new RestTemplate(); 
+		return new RestTemplate();
+		// Client will check for service till 3 seconds before failing.
+		//HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+		//clientHttpRequestFactory.setConnectTimeout(3000); // 3 seconds
+		//return new RestTemplate(clientHttpRequestFactory); 
 	}
-	
+
 	@Bean
-	public WebClient.Builder getWebClientBuilder(){
+	public WebClient.Builder getWebClientBuilder() {
 		return WebClient.builder();
 	}
 
