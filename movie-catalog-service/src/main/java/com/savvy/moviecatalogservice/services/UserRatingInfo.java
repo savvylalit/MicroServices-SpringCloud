@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.savvy.moviecatalogservice.models.Rating;
 import com.savvy.moviecatalogservice.models.UserRating;
 
@@ -18,8 +19,14 @@ public class UserRatingInfo {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@HystrixCommand(fallbackMethod = "getFallbackUserRating")
+	@HystrixCommand(fallbackMethod = "getFallbackUserRating", commandProperties = {
+			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value="3000"),
+			@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value="5"),
+			@HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value="50"),
+			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value="8000")
+	})
 	public UserRating getUserRating(@PathVariable("userId") String userId) {
+		
 		return restTemplate.getForObject("http://movie-rating-service/ratingsdata/users/" + userId, UserRating.class);
 	}
 
