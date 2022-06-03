@@ -18,11 +18,10 @@ public class MovieCatalogServiceApplication {
 	@Bean
 	@LoadBalanced
 	public RestTemplate getRestTemplate() {
-		return new RestTemplate();
 		// Client will check for service till 3 seconds before failing.
-		//HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-		//clientHttpRequestFactory.setConnectTimeout(3000); // 3 seconds
-		//return new RestTemplate(clientHttpRequestFactory); 
+		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+		clientHttpRequestFactory.setConnectTimeout(3000); // 3 seconds
+		return new RestTemplate(clientHttpRequestFactory); 
 	}
 
 	@Bean
